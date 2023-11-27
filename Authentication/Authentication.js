@@ -1,4 +1,5 @@
-const BASE_URL = 'http://192.168.1.10:3000';
+
+import { BASE_URL } from '../Components/Urls';
 
 export async function handleSubmit(submitData) {
     const data = {
@@ -20,7 +21,6 @@ export async function handleSubmit(submitData) {
             const jsonResponse = await response.json();
             const sessionId = jsonResponse.data.sessionId;
             const userData = await fetchProfileData();
-            userData.sessionId = sessionId;
             return userData;
         } else {
             const errorText = await response.text();
@@ -31,7 +31,7 @@ export async function handleSubmit(submitData) {
     }
 }
 
-async function fetchProfileData() {
+export async function fetchProfileData() {
     try {
         const response = await fetch(BASE_URL + '/user/profile', {
             credentials: 'include',
@@ -39,6 +39,7 @@ async function fetchProfileData() {
         if (response.ok) {
             const responseData = await response.json();
             const userData = responseData.data;
+            console.log('User Data:', userData);
             return userData;
         } else {
             console.error('Error fetching profile data: ', await response.text());

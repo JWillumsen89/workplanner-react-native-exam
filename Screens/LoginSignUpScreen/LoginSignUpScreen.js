@@ -4,6 +4,7 @@ import mainStyles from '../../Styles/mainStyles';
 import { handleSubmit } from '../../Authentication/Authentication';
 import { UserContext } from '../../Components/UserContext';
 import { showCustomToast } from '../../Components/CustomToast';
+import { fetchProfileData } from '../../Authentication/Authentication';
 
 function LoginSignUpScreen({ navigation, onLogin }) {
     const [username, setUsername] = useState('');
@@ -21,13 +22,11 @@ function LoginSignUpScreen({ navigation, onLogin }) {
                 username: username,
                 password: password,
             };
-            const userDataResponse = await handleSubmit(data);
+            const userData = await handleSubmit(data);
 
-            if (userDataResponse) {
-                setUserData(userDataResponse);
-                onLogin();
-                showCustomToast({ type: 'success', text1: 'Logged in successfully.' });
-            }
+            setUserData(userData);
+            onLogin();
+            showCustomToast({ type: 'success', text1: 'Logged in successfully.' });
         } catch (error) {
             showCustomToast({ type: 'error', text1: 'Error', text2: error.message });
         }
@@ -35,6 +34,12 @@ function LoginSignUpScreen({ navigation, onLogin }) {
 
     const printUserData = () => {
         console.log('User Data:', userData);
+    };
+
+    const fetchUserData = async () => {
+        const userData = await fetchProfileData();
+        console.log('User Data:', userData);
+        setUserData(userData);
     };
 
     return (
@@ -61,7 +66,7 @@ function LoginSignUpScreen({ navigation, onLogin }) {
                     secureTextEntry
                 />
 
-                <TouchableOpacity style={mainStyles.button} onPress={printUserData}>
+                <TouchableOpacity style={mainStyles.button} onPress={fetchUserData}>
                     <Text style={mainStyles.buttonText}>Print User Data</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={mainStyles.button} onPress={handleLogin}>

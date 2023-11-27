@@ -6,7 +6,7 @@ export const UserContext = createContext({
 });
 
 export const UserProvider = ({ children }) => {
-    const [userData, setUserData] = useState(null); // or some initial value
+    const [userData, setUserData] = useState(null);
 
     const value = { userData, setUserData };
 

@@ -5,6 +5,8 @@ import { UserContext, UserProvider } from './Components/UserContext';
 import { View, Button, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform, ScrollView } from 'react-native';
 import Toast, { BaseToast } from 'react-native-toast-message';
 import { showCustomToast } from './Components/CustomToast';
+import { BASE_URL } from './Components/Urls';
+
 // Screens
 import HomeScreen from './Screens/HomeScreen/HomeScreen';
 import WorkPlannerScreen from './Screens/WorkPlannerScreen/WorkPlannerScreen';
@@ -79,11 +81,20 @@ export default function App() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const { setUserData } = useContext(UserContext);
 
-    const handleLogout = () => {
-        setUserData(null);
-        setIsLoggedIn(false);
-
-        showCustomToast({ type: 'success', text1: 'Logged out successfully.' });
+    const handleLogout = async () => {
+        try {
+            const response = await fetch(BASE_URL + '/auth/logout', {
+                method: 'POST',
+                // credentials: 'include',
+            });
+            if (response.ok) {
+                setUserData(null);
+                setIsLoggedIn(false);
+                showCustomToast({ type: 'success', text1: 'Logged out successfully.' });
+            }
+        } catch (error) {
+            showCustomToast({ type: 'error', text1: 'Error', text2: error.message });
+        }
     };
 
     return (
