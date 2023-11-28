@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import { UserContext, UserProvider } from './Components/UserContext';
-import { View, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform, ScrollView, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import Toast, { BaseToast } from 'react-native-toast-message';
 import { showCustomToast } from './Components/CustomToast';
 import { BASE_URL } from './Components/Urls';
@@ -80,6 +80,21 @@ function CustomDrawerContent(props) {
 
 function MyDrawer({ onLogout }) {
     const userData = useUserData();
+
+    const isPortrait = () => {
+        const dim = Dimensions.get('screen');
+        return dim.height >= dim.width;
+    };
+
+    const [portrait, setPortrait] = useState(isPortrait());
+    useEffect(() => {
+        const subscription = Dimensions.addEventListener('change', () => {
+            setPortrait(isPortrait());
+        });
+
+        return () => subscription?.remove();
+    }, []);
+
     const headerStyle = {
         headerStyle: {
             backgroundColor: '#3D3D3D',
@@ -102,6 +117,10 @@ function MyDrawer({ onLogout }) {
                 drawerInactiveTintColor: '#FFFFFF',
                 drawerActiveBackgroundColor: '#3D3D3D',
                 drawerLabelStyle: { fontSize: 16 },
+                drawerStyle: {
+                    width: portrait ? '75%' : '40%',
+                    minWidth: 250,
+                },
             }}
             drawerContent={props => <CustomDrawerContent {...props} onLogout={onLogout} />}
         >
@@ -209,24 +228,17 @@ export default function App() {
 
     return (
         <UserProvider>
-            <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, position: 'relative' }}>
-                    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} keyboardShouldPersistTaps="always">
-                        <View style={{ flex: 1 }}>
-                            <NavigationContainer>
-                                {isLoading ? (
-                                    <ActivityIndicator size="large" color="#0000ff" />
-                                ) : isLoggedIn ? (
-                                    <MyDrawer onLogout={handleLogout} />
-                                ) : (
-                                    <LoginSignUpScreen onLogin={() => setIsLoggedIn(true)} />
-                                )}
-                            </NavigationContainer>
-                        </View>
-                    </TouchableWithoutFeedback>
-                </KeyboardAvoidingView>
-            </ScrollView>
-
+            <View style={{ flex: 1 }}>
+                <NavigationContainer>
+                    {isLoading ? (
+                        <ActivityIndicator size="large" color="#0000ff" />
+                    ) : isLoggedIn ? (
+                        <MyDrawer onLogout={handleLogout} />
+                    ) : (
+                        <LoginSignUpScreen onLogin={() => setIsLoggedIn(true)} />
+                    )}
+                </NavigationContainer>
+            </View>
             <Toast config={toastConfig} />
         </UserProvider>
     );

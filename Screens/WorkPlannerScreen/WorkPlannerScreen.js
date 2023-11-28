@@ -1,23 +1,37 @@
-// In SettingsScreen.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { showCustomToast } from '../../Components/CustomToast';
 import mainStyles from '../../Styles/mainStyles';
 import { BASE_URL } from '../../Components/Urls';
+import Calendar from './Calendar';
+import { socket } from '../../Components/Socket.io';
 
 function WorkPlannerScreen({ navigation }) {
+    const [usersList, setUsersList] = useState([]);
+
+    useEffect(() => {
+        fetchUsersData();
+    }, []);
+
+    socket.on('user_signup', async () => {
+        await fetchUsersData();
+    });
+
+    socket.on('user_updated', async () => {
+        await fetchUsersData();
+    });
+
     const fetchUsersData = async () => {
         try {
-            const response = await fetch(BASE_URL + '/admin/get-all-users', {
+            const response = await fetch(BASE_URL + '/admin/users', {
                 credentials: 'include',
             });
             if (!response.ok) {
                 throw new Error('Network response was not ok: ' + response.statusText);
             }
             const responseData = await response.json();
-            const usersData = responseData.data;
-            
-            console.log('Users Data:', usersData);
+            const sortedUsers = responseData.data.sort((a, b) => a.username.localeCompare(b.username));
+            setUsersList(sortedUsers);
         } catch (error) {
             showCustomToast({ type: 'error', text1: 'Error', text2: error.message });
         }
@@ -25,24 +39,10 @@ function WorkPlannerScreen({ navigation }) {
 
     return (
         <View style={mainStyles.contentContainer}>
-            <Text>Work Planner Screen</Text>
-            <TouchableOpacity style={mainStyles.button} onPress={fetchUsersData}>
-                <Text style={mainStyles.buttonText}>Fetch Users Data</Text>
-            </TouchableOpacity>
+            <Calendar usersList={usersList}/>
         </View>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    text: {
-        fontSize: 20,
-        marginBottom: 20,
-    },
-});
 
 export default WorkPlannerScreen;
