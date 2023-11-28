@@ -1,7 +1,7 @@
-
 import { BASE_URL } from '../Components/Urls';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export async function handleSubmit(submitData) {
+export async function handleSubmit(submitData, setUserData, setSessionId) {
     const data = {
         username: submitData.username,
         password: submitData.password,
@@ -21,10 +21,11 @@ export async function handleSubmit(submitData) {
             const jsonResponse = await response.json();
             const sessionId = jsonResponse.data.sessionId;
             const userData = await fetchProfileData();
-            return userData;
-        } else {
-            const errorText = await response.text();
-            throw new Error(errorText);
+
+            setUserData(userData);
+            setSessionId(sessionId);
+            await AsyncStorage.setItem('sessionId', sessionId);
+            await AsyncStorage.setItem('userData', JSON.stringify(userData));
         }
     } catch (error) {
         console.error('Error:', error.message);
@@ -39,10 +40,30 @@ export async function fetchProfileData() {
         if (response.ok) {
             const responseData = await response.json();
             const userData = responseData.data;
-            console.log('User Data:', userData);
             return userData;
         } else {
             console.error('Error fetching profile data: ', await response.text());
+        }
+    } catch (error) {
+        console.error('Fetch error: ', error);
+    }
+}
+
+export async function validateSession() {
+    try {
+        const response = await fetch(BASE_URL + '/auth/validateSession', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+        });
+        if (response.ok) {
+            const responseData = await response.json();
+            const isValidSession = responseData.isValid;
+            return isValidSession;
+        } else {
+            console.error('Error validating session: ', await response.text());
         }
     } catch (error) {
         console.error('Fetch error: ', error);

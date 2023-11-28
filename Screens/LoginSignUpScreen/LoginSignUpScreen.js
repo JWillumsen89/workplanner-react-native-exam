@@ -1,30 +1,29 @@
-import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, TextInput, TouchableOpacity } from 'react-native';
 import mainStyles from '../../Styles/mainStyles';
 import { handleSubmit } from '../../Authentication/Authentication';
-import { UserContext } from '../../Components/UserContext';
 import { showCustomToast } from '../../Components/CustomToast';
-import { fetchProfileData } from '../../Authentication/Authentication';
+import { UserContext } from '../../Components/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function LoginSignUpScreen({ navigation, onLogin }) {
+function LoginSignUpScreen({ onLogin }) {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const { userData, setUserData } = useContext(UserContext);
+    const { setUserData, setSessionId } = useContext(UserContext);
 
     const handleLogin = async () => {
         if (!username.trim() || !password.trim()) {
             showCustomToast({ type: 'error', text1: 'Error', text2: 'Username and Password are required.' });
             return;
         }
-
         try {
             const data = {
                 username: username,
                 password: password,
             };
-            const userData = await handleSubmit(data);
 
-            setUserData(userData);
+            await handleSubmit(data, setUserData, setSessionId);
+
             onLogin();
             showCustomToast({ type: 'success', text1: 'Logged in successfully.' });
         } catch (error) {
@@ -32,14 +31,14 @@ function LoginSignUpScreen({ navigation, onLogin }) {
         }
     };
 
-    const printUserData = () => {
-        console.log('User Data:', userData);
-    };
-
-    const fetchUserData = async () => {
-        const userData = await fetchProfileData();
-        console.log('User Data:', userData);
-        setUserData(userData);
+    const printUserData = async () => {
+        try {
+            const userDataString = await AsyncStorage.getItem('userData');
+            const userData = userDataString ? JSON.parse(userDataString) : null;
+            console.log('AsyncStorage - User Data: ', userData);
+        } catch (error) {
+            console.error('Error reading userData from AsyncStorage:', error);
+        }
     };
 
     return (
@@ -66,11 +65,11 @@ function LoginSignUpScreen({ navigation, onLogin }) {
                     secureTextEntry
                 />
 
-                <TouchableOpacity style={mainStyles.button} onPress={fetchUserData}>
-                    <Text style={mainStyles.buttonText}>Print User Data</Text>
-                </TouchableOpacity>
                 <TouchableOpacity style={mainStyles.button} onPress={handleLogin}>
                     <Text style={mainStyles.buttonText}>Login</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={mainStyles.button} onPress={printUserData}>
+                    <Text style={mainStyles.buttonText}>Print Async User Data</Text>
                 </TouchableOpacity>
             </View>
         </View>

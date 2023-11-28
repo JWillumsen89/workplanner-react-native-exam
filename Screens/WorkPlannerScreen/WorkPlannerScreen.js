@@ -16,6 +16,7 @@ function WorkPlannerScreen({ navigation }) {
             }
             const responseData = await response.json();
             const usersData = responseData.data;
+            
             console.log('Users Data:', usersData);
         } catch (error) {
             showCustomToast({ type: 'error', text1: 'Error', text2: error.message });
@@ -23,9 +24,8 @@ function WorkPlannerScreen({ navigation }) {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.text}>Work Planner Screen</Text>
-            <Button title="Go to Home" onPress={() => navigation.navigate('Home')} />
+        <View style={mainStyles.contentContainer}>
+            <Text>Work Planner Screen</Text>
             <TouchableOpacity style={mainStyles.button} onPress={fetchUsersData}>
                 <Text style={mainStyles.buttonText}>Fetch Users Data</Text>
             </TouchableOpacity>

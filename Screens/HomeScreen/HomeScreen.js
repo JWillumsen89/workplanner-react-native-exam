@@ -1,31 +1,27 @@
-// In HomeScreen.js
 import React, { useContext } from 'react';
 import { UserContext } from '../../Components/UserContext';
-import { View, Text, Button, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import mainStyles from '../../Styles/mainStyles';
-import { fetchProfileData } from '../../Authentication/Authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function HomeScreen({ navigation }) {
-    const { userData, setUserData } = useContext(UserContext);
+    const { userData, setUserData, sessionId, setSessionId } = useContext(UserContext);
 
-    const printUserData = () => {
-        console.log('User Data:', userData);
-    };
-
-    const fetchUserData = async () => {
-        const userData = await fetchProfileData();
-        setUserData(userData);
+    const printUserData = async () => {
+        try {
+            const userDataString = await AsyncStorage.getItem('userData');
+            const userData = userDataString ? JSON.parse(userDataString) : null;
+            console.log('AsyncStorage - User Data: ', userData);
+        } catch (error) {
+            console.error('Error reading userData from AsyncStorage:', error);
+        }
     };
 
     return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <View style={mainStyles.contentContainer}>
             <Text>Home Screen</Text>
-            <Button title="Go to Work Planner" onPress={() => navigation.navigate('WorkPlanner')} />
             <TouchableOpacity style={mainStyles.button} onPress={printUserData}>
-                <Text style={mainStyles.buttonText}>Print User Data</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={mainStyles.button} onPress={fetchUserData}>
-                <Text style={mainStyles.buttonText}>Fetch User</Text>
+                <Text style={mainStyles.buttonText}>Print Async User Data</Text>
             </TouchableOpacity>
         </View>
     );

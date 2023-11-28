@@ -6,52 +6,88 @@ const mainStyles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: '#1C1C1E', // Dark background for the whole screen
+        backgroundColor: '#1C1C1E',
     },
     formContainer: {
-        width: '100%', // Take up full width available
-        padding: 20, // Padding inside the container
-        borderRadius: 10, // Rounded corners for the form
-        borderWidth: 2, // Border width
-        borderColor: '#FFA726', // Orange border color
-        backgroundColor: '#262626', // Slightly lighter dark background for the form
-        marginBottom: 20, // Space below the form
+        width: '100%',
+        padding: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#FFA726',
+        backgroundColor: '#262626',
+        marginBottom: 20,
     },
     text: {
         fontSize: 24,
         marginBottom: 20,
-        color: '#FFA726', // Orange color for text
+        color: '#FFA726',
     },
     input: {
         width: '100%',
         borderWidth: 1,
-        borderColor: '#FFA726', // Orange border
+        borderColor: '#FFA726',
         padding: 10,
         marginBottom: 15,
         borderRadius: 5,
-        backgroundColor: '#262626', // Slightly lighter grey for input background
-        color: '#FFFFFF', // White color for input text
+        backgroundColor: '#262626',
+        color: '#FFFFFF',
     },
     button: {
-        backgroundColor: '#FFA726', // Orange background for buttons
-        paddingVertical: 10, // Reduced vertical padding
-        paddingHorizontal: 20, // Slightly more horizontal padding
-        borderRadius: 5, // Rounded corners
-        borderWidth: 1, // Subtle border
-        borderColor: '#FFB85C', // A lighter shade of orange for the border
-        alignItems: 'center', // Center text in button
-        marginBottom: 10, // Space below each button
-        width: '80%', // Less massive, more elegant width
-        alignSelf: 'center', // Center the button in its container
+        backgroundColor: '#FFA726',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#FFB85C',
+        alignItems: 'center',
+        marginBottom: 10,
+        width: '80%',
+        alignSelf: 'center',
     },
     buttonText: {
-        fontSize: 16, // Adjusted font size
-        color: '#1C1C1E', // Dark text for better contrast
-        fontWeight: '500', // Medium font weight
+        fontSize: 16,
+        color: '#1C1C1E',
+        fontWeight: '500',
     },
     textContainer: {
         alignItems: 'center',
-        marginBottom: 20, // Margin bottom for text container
+        marginBottom: 20,
+    },
+    userProfileSectionStyle: {
+        backgroundColor: '#262626', // A slightly lighter dark background
+        padding: 15,
+        margin: 5,
+        marginBottom: 10,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#FFA726',
+        backgroundColor: '#3D3D3D',
+    },
+    usernameText: {
+        color: '#FFA726',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    emailText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        marginBottom: 5,
+    },
+    roleText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontStyle: 'italic',
+    },
+    avatarPlaceholder: {
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: '#FFA726',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 10,
+        alignSelf: 'center',
     },
 });
 
